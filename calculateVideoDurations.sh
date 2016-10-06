@@ -18,16 +18,18 @@ round()
 	echo $(printf %.$2f $(echo "scale=$2;(((10^$2)*$1)+0.5)/(10^$2)" | bc))
 };
 if [ -z $FILE ]; then
-	FILES=`ls $DIRECTORY`
+	FILES=`find $DIRECTORY`
 elif [ -z $DIRECTORY ]; then
 	FILES=$FILE
 fi
 totalTime=0
 for file in $FILES
 do
-	videoTime=$(ffprobe -select_streams v -show_streams `echo $PWD/$file` 2>/dev/null | grep duration= | cut -d"=" -f2)
-	echo $file lasts $videoTime seconds
-	totalTime=$totalTime+$videoTime
+	videoTime=$(ffprobe -select_streams v -show_streams $file 2>/dev/null | grep duration= | cut -d"=" -f2)
+	if [ ${#videoTime} != 0 ]; then
+		echo $file lasts $videoTime seconds
+		totalTime=$totalTime+$videoTime
+	fi
 done
 totalTime=${totalTime}0
 totalSeconds=`echo $totalTime | bc`
