@@ -25,10 +25,14 @@ fi
 totalTime=0
 for file in $FILES
 do
-	videoTime=$(ffprobe -select_streams v -show_streams $file 2>/dev/null | grep duration= | cut -d"=" -f2)
-	if [ ${#videoTime} != 0 ]; then
-		echo $file lasts $videoTime seconds
-		totalTime=$totalTime+$videoTime
+	if [ -f $file ]; then
+		videoTime=$(ffprobe -select_streams v -show_streams $file 2>/dev/null | grep duration= | cut -d"=" -f2)
+		if [ ${#videoTime} == 10 ]; then
+			echo $file lasts $videoTime seconds
+			totalTime=$totalTime+$videoTime
+		else
+			echo cannot calculate duration for $file
+		fi
 	fi
 done
 totalTime=${totalTime}0
